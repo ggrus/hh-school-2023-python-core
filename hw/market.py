@@ -1,14 +1,4 @@
-from datetime import datetime
-
-def function_info_decorator(func):
-    def wrapper(*args, **kwargs):
-        print('\nСтарт функции', func.__qualname__)
-        start = datetime.now()
-        result = func(*args, **kwargs)
-        print('Финиш. Затраченное время: ', datetime.now() - start)
-        print('Результат выполнения:\n', result)
-        return result
-    return wrapper
+from function_info_decorator import function_info_decorator
 
 class Market:
     def __init__(self, wines: list = None, beers: list = None) -> None:
@@ -32,7 +22,7 @@ class Market:
 
         :return: list
         """
-        return sorted([*self.beers, *self.wines], key=lambda x: (x is None, x))
+        return sorted([*self.beers.values(), *self.wines.values()], key=lambda x: (x.title is None, x.title))
 
     @function_info_decorator
     def get_drinks_by_production_date(self, from_date=None, to_date=None) -> list:
@@ -42,13 +32,7 @@ class Market:
         :return: list
         """
         drinks = [*self.beers.values(), *self.wines.values()]
-        filtered_drinks =  list(filter(lambda drink: self.__date_in_range(drink, from_date, to_date), drinks))
-        result = list()
-
-        for drink in filtered_drinks:
-            result.append(drink.title)
-
-        return result
+        return list(filter(lambda drink: self.__date_in_range(drink, from_date, to_date), drinks))
 
     def __date_in_range(self, drink, from_date=None, to_date=None) -> bool:
         """
